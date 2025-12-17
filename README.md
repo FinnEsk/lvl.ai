@@ -96,20 +96,3 @@ A new **Leaderboard page** that displays:
 2. **Auth Middleware Pattern:** The existing friend routes used `req.user['id']` but the auth middleware actually sets `req.user._id`. This caused initial 500 errors until corrected to use `req.user._id`.
 
 3. **Null Safety:** Had to handle cases where users have no friends, ensuring the code doesn't crash when spreading an undefined/empty friends array.
-
-## Screenshots
-
-The leaderboard features:
-- Dark gradient header with trophy icon and user's current rank
-- Top 3 podium with medal indicators (gold/silver/bronze)
-- Scrollable list for remaining rankings
-- Current user row highlighted with accent color
-- Summary stats cards at the bottom
-
-## Future Improvements
-
-- Add time-based leaderboards (weekly, monthly)
-- Add filtering by specific metrics (tasks completed, level)
-- Implement real-time updates using WebSockets
-- Add pagination for users with many friends
-- Add achievement badges next to top performers

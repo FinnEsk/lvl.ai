@@ -15,7 +15,8 @@ import {
   XMarkIcon,
   BellIcon,
   UserCircleIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  TrophyIcon,
 } from '@heroicons/react/24/outline';
 
 interface NavigationItem {
@@ -29,6 +30,7 @@ const navigation: NavigationItem[] = [
   { name: 'Dashboard', href: '/home', icon: HomeIcon },
   { name: 'Tasks', href: '/tasks', icon: ClipboardDocumentListIcon },
   { name: 'Friends', href: '/friends', icon: UserGroupIcon },
+  { name: 'Leaderboard', href: '/leaderboard', icon: TrophyIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
   { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];

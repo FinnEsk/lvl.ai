@@ -10,6 +10,7 @@ export * as TaskService from './task';
 
 // Friends API
 export { default as FriendsAPI } from './friends';
+export type { LeaderboardEntry, LeaderboardResponse } from './friends';
 
 // AI Agents API
 export { default as organizerAgentAPI } from './agents/organizerAgent';

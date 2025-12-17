@@ -173,6 +173,84 @@ router.get('/', authenticate, async (req: Request, res: Response, next: NextFunc
   }
 });
 
+// @route   GET /api/friends/leaderboard
+// @desc    Get friends leaderboard ranked by XP
+// @access  Private
+router.get('/leaderboard', authenticate, async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = (req as any).user._id;
+
+    // Get current user with friends populated (including stats)
+    const currentUser = await User.findById(userId)
+      .select('name email avatar level xp totalTasksCompleted friends')
+      .populate('friends', 'name email avatar level xp totalTasksCompleted');
+
+    if (!currentUser) {
+      throw new CustomError('User not found', 404);
+    }
+
+    // Build leaderboard array with current user
+    const leaderboardEntries: Array<{
+      _id: any;
+      name: string;
+      email: string;
+      avatar: string | undefined;
+      level: number;
+      xp: number;
+      totalTasksCompleted: number;
+      isCurrentUser: boolean;
+    }> = [
+      {
+        _id: currentUser._id,
+        name: currentUser.name,
+        email: currentUser.email,
+        avatar: currentUser.avatar,
+        level: currentUser.level,
+        xp: currentUser.xp,
+        totalTasksCompleted: currentUser.totalTasksCompleted,
+        isCurrentUser: true,
+      },
+    ];
+
+    // Add friends to leaderboard if they exist
+    const friends = currentUser.friends || [];
+    if (Array.isArray(friends) && friends.length > 0) {
+      for (const friend of friends as any[]) {
+        // Only add if friend was properly populated (has name property)
+        if (friend && friend.name) {
+          leaderboardEntries.push({
+            _id: friend._id,
+            name: friend.name,
+            email: friend.email,
+            avatar: friend.avatar,
+            level: friend.level || 1,
+            xp: friend.xp || 0,
+            totalTasksCompleted: friend.totalTasksCompleted || 0,
+            isCurrentUser: false,
+          });
+        }
+      }
+    }
+
+    // Sort by XP descending (highest first)
+    leaderboardEntries.sort((a, b) => b.xp - a.xp);
+
+    // Add rank numbers
+    const rankedLeaderboard = leaderboardEntries.map((entry, index) => ({
+      ...entry,
+      rank: index + 1,
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: rankedLeaderboard.length,
+      data: rankedLeaderboard,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // @route   GET /api/friends/pending
 // @desc    Get pending friend requests
 // @access  Private

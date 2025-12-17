@@ -2,6 +2,25 @@ import { AxiosResponse } from 'axios';
 import apiClient from './client';
 import { ApiResponse, User } from '@/lib/types';
 
+// Leaderboard entry type
+export interface LeaderboardEntry {
+  _id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+  level: number;
+  xp: number;
+  totalTasksCompleted: number;
+  isCurrentUser: boolean;
+  rank: number;
+}
+
+export interface LeaderboardResponse {
+  success: boolean;
+  count: number;
+  data: LeaderboardEntry[];
+}
+
 // Friends API endpoints based on backend routes
 export class FriendsAPI {
   // @route   POST /api/friends/request
@@ -94,6 +113,16 @@ export class FriendsAPI {
       return { message: response.data.message };
     }
     throw new Error('Failed to unblock user');
+  }
+
+  // @route   GET /api/friends/leaderboard
+  // @desc    Get friends leaderboard ranked by XP
+  static async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    const response: AxiosResponse<LeaderboardResponse> = await apiClient.client.get('/friends/leaderboard');
+    if (response.data.success) {
+      return response.data.data;
+    }
+    throw new Error('Failed to fetch leaderboard');
   }
 }
 
